@@ -1,67 +1,45 @@
-const taskIDDOM = document.querySelector(".task-edit-id");
-const taskNameDOM = document.querySelector(".task-edit-name");
-const taskCompletedDOM = document.querySelector(".task-edit-completed");
-const editFormDOM = document.querySelector(".single-task-form");
-const editBtnDOM = document.querySelector(".task-edit-btn");
-const formAlertDOM = document.querySelector(".form-alert");
-const params = window.location.search;
-const id = new URLSearchParams(params).get("id");
-let tempName;
-
+editTaskIDDOM = document.querySelector(".task-edit-id");
+editTaskNameDOM = document.querySelector(".task-edit-name");
+editTaskCompletedDOM = document.querySelector(".task-edit-completed");
+formAlertDOM = document.querySelector(".form-alert");
+formDOM = document.querySelector(".single-task-form");
+//getting task id value from url
+const arr_str = window.location.href.toString();
+const arr = arr_str.split("=");
+const id = arr[arr.length - 1];
 const showTask = async () => {
-  try {
-    const {
-      data: { task },
-    } = await axios.get(`/api/v1/tasks/${id}`);
-    const { _id: taskID, completed, name } = task;
-
-    taskIDDOM.textContent = taskID;
-    taskNameDOM.value = name;
-    tempName = name;
-    if (completed) {
-      taskCompletedDOM.checked = true;
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  console.log(arr);
+  const {
+    data: { task },
+  } = await axios.get(`api/v1/tasks/${id}`);
+  console.log(task);
+  const { _id: taskID, name, completed } = task;
+  console.log(taskID);
+  //assigns name , checked, and id to the task
+  editTaskIDDOM.innerHTML = `<p>${taskID}</p>`;
+  editTaskNameDOM.value = name;
+  editTaskCompletedDOM.checked = completed;
 };
-
 showTask();
-
-editFormDOM.addEventListener("submit", async (e) => {
-  editBtnDOM.textContent = "Loading...";
+//on clicking edit button
+formDOM.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const name = editTaskNameDOM.value;
+  const checked = editTaskCompletedDOM.checked;
+  //Posting the edited task
   try {
-    const taskName = taskNameDOM.value;
-    const taskCompleted = taskCompletedDOM.checked;
-
-    const {
-      data: { task },
-    } = await axios.patch(`/api/v1/tasks/${id}`, {
-      name: taskName,
-      completed: taskCompleted,
+    await axios.patch(`/api/v1/tasks/${id}`, {
+      name: name,
+      completed: checked,
     });
-
-    const { _id: taskID, completed, name } = task;
-
-    taskIDDOM.textContent = taskID;
-    taskNameDOM.value = name;
-    tempName = name;
-    if (completed) {
-      taskCompletedDOM.checked = true;
-    }
-    formAlertDOM.style.display = "block";
-    formAlertDOM.textContent = `success, edited task`;
-    formAlertDOM.classList.add("text-success");
+    //Sending a success alert
+    formAlertDOM.innerHTML =
+      "<p class='alert-success'>Success Task Added!!</p>";
+    setTimeout(() => {
+      formAlertDOM.innerHTML = "";
+    }, 2000);
   } catch (error) {
-    console.error(error);
-    taskNameDOM.value = tempName;
-    formAlertDOM.style.display = "block";
-    formAlertDOM.innerHTML = `error, please try again`;
+    //Error alert
+    formAlertDOM.innerHTML = `<p class='text-danger'> Error, please try again</p>`;
   }
-  editBtnDOM.textContent = "Edit";
-  setTimeout(() => {
-    formAlertDOM.style.display = "none";
-    formAlertDOM.classList.remove("text-success");
-  }, 3000);
 });

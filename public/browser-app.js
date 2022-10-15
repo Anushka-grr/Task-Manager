@@ -5,23 +5,11 @@ const loadingDOM = document.querySelector(".loading-text");
 const formDOM = document.querySelector(".task-form");
 
 //should return innerhtml of tasksDOM
-const addTask = async (taskID, completed, name) => {
-  const k = `<div class="single-task ${completed && "task-completed"}">
-        <h5><span><i class="far fa-check-circle"></i></span>${name}</h5>
-          <div class="task-links">
-            <!-- edit link -->
-      <a href="task.html?id=${taskID}"  class="edit-link">
-      <i class="fas fa-edit"></i>
-      </a>
-      <!-- delete btn -->
-      <button type="button" class="delete-btn" data-id="${taskID}">
-      <i class="fas fa-trash"></i>
-      </button>
-      </div>
-      </div>`;
+// const addTask = async (taskID, completed, name) => {
+//   const k =
 
-  return (tasksDOM.innerHTML += k);
-};
+//   return (tasksDOM.innerHTML += k);
+// };
 
 // Shows all tasks
 const showTasks = async () => {
@@ -49,11 +37,27 @@ const showTasks = async () => {
       return;
     }
 
-    const all = tasks.map((task) => {
-      const { _id: taskID, completed, name } = task;
+    const all = tasks
+      .map((task) => {
+        const { _id: taskID, completed, name } = task;
+        //temporary og route
+        return `<div class="single-task ${completed && "task-completed"}">
+        <h5><span><i class="far fa-check-circle"></i></span>${name}</h5>
+          <div class="task-links">
+            <!-- edit link -->
+      <a href="task.html?id=${taskID}"  class="edit-link">
+      <i class="fas fa-edit"></i>
+      </a>
+      <!-- delete btn -->
+      <button type="button" class="delete-btn" data-id="${taskID}">
+      <i class="fas fa-trash"></i>
+      </button>
+      </div>
+      </div>`;
+      })
+      .join("");
 
-      addTask(taskID, completed, name);
-    });
+    tasksDOM.innerHTML = all;
 
     // Once the task is fetched, we create a dom element for each task.
 
@@ -82,8 +86,9 @@ showTasks();
 formDOM.addEventListener("submit", async (e) => {
   e.preventDefault();
   const taskname = taskInputDOM.value;
+  //todo add a try catch block to handle axios errors
   if (!taskname) {
-    return (formAlertDOM.innerHTML = "ENTER SOME TASKS");
+    return (formAlertDOM.innerHTML = " ENTER SOME TASKS");
   }
 
   await axios.post("api/v1/tasks", {
