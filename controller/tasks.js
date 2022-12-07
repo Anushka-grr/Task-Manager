@@ -10,16 +10,12 @@ const getAllTasks = async (req, res) => {
 };
 const postTasks = async (req, res) => {
   try {
-    // What is req.body schema? Shall we allow anything to be posted from frontend
-
-    // What if req. body is {age:23,email:'asd@asd.com'}
     const task = await Task.create(req.body);
     res.status(201).json({ task });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
 };
-
 const getTasks = async (req, res) => {
   try {
     //TODO: What if id is not there in req.params?
@@ -63,9 +59,3 @@ const deleteTasks = async (req, res) => {
 };
 
 module.exports = { getAllTasks, postTasks, getTasks, updateTasks, deleteTasks };
-
-// app.get('api/v1/tasks') -get all the taska
-// app.post('api/v1/tasks') -post all the tasks
-// app.get('api/v1/tasks/:id') - get one task
-// app.patch('api/v1/tasks/:id') - update task
-// app.delete('api/v1/tasks/:id') - delte task

@@ -4,13 +4,6 @@ const formAlertDOM = document.querySelector(".form-alert");
 const loadingDOM = document.querySelector(".loading-text");
 const formDOM = document.querySelector(".task-form");
 
-//should return innerhtml of tasksDOM
-// const addTask = async (taskID, completed, name) => {
-//   const k =
-
-//   return (tasksDOM.innerHTML += k);
-// };
-
 // Shows all tasks
 const showTasks = async () => {
   loadingDOM.style.visibiliy = "visible";
@@ -40,11 +33,10 @@ const showTasks = async () => {
     const all = tasks
       .map((task) => {
         const { _id: taskID, completed, name } = task;
-        //temporary og route
         return `<div class="single-task ${completed && "task-completed"}">
-        <h5><span><i class="far fa-check-circle"></i></span>${name}</h5>
-          <div class="task-links">
-            <!-- edit link -->
+      <h5><span><i class="far fa-check-circle"></i></span>${name}</h5>
+      <div class="task-links">
+      <!-- edit link -->
       <a href="task.html?id=${taskID}"  class="edit-link">
       <i class="fas fa-edit"></i>
       </a>
@@ -89,6 +81,7 @@ formDOM.addEventListener("submit", async (e) => {
   //todo add a try catch block to handle axios errors
   if (!taskname) {
     return (formAlertDOM.innerHTML = " ENTER SOME TASKS");
+    //todo settimeout for the alert
   }
 
   await axios.post("api/v1/tasks", {
